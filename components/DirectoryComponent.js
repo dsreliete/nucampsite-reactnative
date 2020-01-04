@@ -7,6 +7,7 @@ function Directory(props) {
     const renderDirectoryItem = ({item}) => {
         return (
             <ListItem
+                onPress={() => props.onPress(item.id)}
                 title={item.name}
                 subtitle={item.description}
                 leftAvatar={{ source: require('./images/react-lake.jpg')}}
