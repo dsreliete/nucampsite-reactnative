@@ -147,24 +147,24 @@ class CampsiteInfo extends Component {
                             />
                             <Input
                                 style={{paddingRight: 10, color: 'black'}}
-                                placeholder='author'
+                                placeholder='Author'
                                 placeholderTextColor='grey'
-                                underlineColorAndroid='black'
-                                leftIcon={
-                                    <Icon
-                                        style={{paddingRight: 10}}
-                                        type='font-awesome'
-                                        name='user-o'
-                                    />
-                                }
+                                leftIcon={{
+                                    type:'font-awesome',
+                                    name:'user-o',
+                                    containerStyle:{ paddingRight: 10 }
+                                }}
                                 onChangeText={(author) => this.setState({author: author})}
                             />
                             <Input
                                 style={{paddingRight: 10}}
-                                placeholder='comment'
+                                placeholder='Comment'
                                 placeholderTextColor='grey'
-                                underlineColorAndroid='black'
-                                leftIcon={{type: 'font-awesome', name: 'comment-o'}}
+                                leftIcon={{
+                                    type: 'font-awesome', 
+                                    name: 'comment-o', 
+                                    containerStyle:{ paddingRight: 10 }
+                                }}
                                 onChangeText={(text) => this.setState({text: text})}
                             />
                             <View style={{margin: 10}}>
