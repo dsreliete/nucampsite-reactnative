@@ -4,7 +4,7 @@ import { Card, Icon, Rating, Input } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
-import { postFavorite } from '../redux/ActionCreators';
+import { postFavorite, postComment } from '../redux/ActionCreators';
 
 const mapStateToProps = state => {
     return {
@@ -15,24 +15,25 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-    postFavorite: campsiteId => (postFavorite(campsiteId))
+    postFavorite: campsiteId => (postFavorite(campsiteId)),
+    postComment: (campsiteId, rating, author, text) => (postComment(campsiteId, rating, author, text)),
 };
 
 function RenderCampsite(props) { 
     
-    const {campsite} = props; 
+    const { campsite } = props; 
     
     if (campsite) {
         return (
             <Card
                 featuredTitle={campsite.name}
-                image={{uri: baseUrl + campsite.image}}>
+                image={{ uri: baseUrl + campsite.image }}>
                 <Text style={{margin: 10}}>
                     {campsite.description}
                 </Text>
-                <View style={styles.cardRow}>
+                <View style={ styles.cardRow }>
                     <Icon
-                        name={props.favorite ? 'heart' : 'heart-o'}
+                        name={ props.favorite ? 'heart' : 'heart-o' }
                         type='font-awesome'
                         color='#f50'
                         raised
@@ -41,7 +42,7 @@ function RenderCampsite(props) {
                             console.log('Already set as a favorite') : props.markFavorite()}
                     />
                     <Icon
-                        style={styles.cardItem}
+                        style={ styles.cardItem }
                         name='pencil'
                         type='font-awesome'
                         color='#5637DD'
@@ -57,19 +58,18 @@ function RenderCampsite(props) {
     return <View />;
 }
 
-function RenderComments({comments}) {
-
-    const renderCommentItem = ({item}) => {
+function RenderComments({ comments }) {
+    const renderCommentItem = ({ item }) => {
         return (
-            <View style={{margin: 10}}>
-                <Text style={{fontSize: 14}}>{item.text}</Text>
+            <View style={{ margin: 10 }}>
+                <Text style={{ fontSize: 14 }}>{ item.text }</Text>
                 <Rating 
                     readonly
-                    startingValue={item.rating}
-                    imageSize={10}
-                    style={{alignItems:'flex-start', paddingVertical: 10}}
+                    startingValue={ item.rating }
+                    imageSize={ 10 }
+                    style={{ alignItems:'flex-start', paddingVertical: 10 }}
                 />
-                <Text style={{fontSize: 12}}>{`-- ${item.author}, ${item.date}`}</Text>
+                <Text style={{fontSize: 12}}>{`-- ${ item.author }, ${ item.date }`}</Text>
             </View>
         );
     };
@@ -77,9 +77,9 @@ function RenderComments({comments}) {
     return (
         <Card title='Comments'>
             <FlatList
-                data={comments}
-                renderItem={renderCommentItem}
-                keyExtractor={item => item.id.toString()}
+                data={ comments }
+                renderItem={ renderCommentItem }
+                keyExtractor={ item => item.id.toString() }
             />
         </Card>
     );
@@ -109,11 +109,11 @@ class CampsiteInfo extends Component {
     }
 
     toggleModal() {
-        this.setState({showModal: !this.state.showModal});
+        this.setState({ showModal: !this.state.showModal });
     }
 
     handleComment(campsiteId) {
-        console.log(JSON.stringify(this.state));
+        this.props.postComment(campsiteId, this.state.rating, this.state.author, this.state.text);
         this.toggleModal();
     }
 
@@ -135,66 +135,66 @@ class CampsiteInfo extends Component {
                 />
                 <RenderComments comments={comments} />
                 <Modal
-                        animationType={'slide'}
-                        transparent={false}
-                        visible={this.state.showModal}
-                        onRequestClose={() => this.toggleModal()}>
-                        <SafeAreaView 
-                            forceInset={{top: 'always', horizontal: 'never'}}>
-                        </SafeAreaView>
-                        <View style={styles.modal}>
-                            <Rating 
-                                showRating
-                                startingValue={this.state.rating}
-                                imageSize={40}
-                                style={{paddingVertical: 10}}
-                                onFinishRating={(rating)=>this.setState({rating: rating})} 
-                            />
-                            <Input
-                                style={{paddingRight: 10, color: 'black'}}
-                                placeholder='Author'
-                                placeholderTextColor='grey'
-                                leftIcon={{
-                                    type:'font-awesome',
-                                    name:'user-o',
-                                    containerStyle:{ paddingRight: 10 }
+                    animationType={ 'slide' }
+                    transparent={ false }
+                    visible={ this.state.showModal }
+                    onRequestClose={ () => this.toggleModal() }>
+                    <SafeAreaView 
+                        forceInset={{ top: 'always', horizontal: 'never' }}>
+                    </SafeAreaView>
+                    <View style={styles.modal}>
+                        <Rating 
+                            showRating
+                            startingValue={this.state.rating}
+                            imageSize={40}
+                            style={{ paddingVertical: 10 }}
+                            onFinishRating={(rating)=>this.setState({ rating: rating })} 
+                        />
+                        <Input
+                            style={{ paddingRight: 10, color: 'black' }}
+                            placeholder='Author'
+                            placeholderTextColor='grey'
+                            leftIcon={{
+                                type:'font-awesome',
+                                name:'user-o',
+                                containerStyle:{ paddingRight: 10 }
+                            }}
+                            onChangeText={(author) => this.setState({ author: author })}
+                        />
+                        <Input
+                            style={{ paddingRight: 10 }}
+                            placeholder='Comment'
+                            placeholderTextColor='grey'
+                            leftIcon={{
+                                type: 'font-awesome', 
+                                name: 'comment-o', 
+                                containerStyle:{ paddingRight: 10 }
+                            }}
+                            onChangeText={(text) => this.setState({ text: text })}
+                        />
+                        <View style={{ margin: 10 }}>
+                            <Button
+                                color='#5637DD'
+                                title='Submit'
+                                onPress={() => {
+                                    this.handleComment(campsiteId);
+                                    this.resetForm();
                                 }}
-                                onChangeText={(author) => this.setState({author: author})}
                             />
-                            <Input
-                                style={{paddingRight: 10}}
-                                placeholder='Comment'
-                                placeholderTextColor='grey'
-                                leftIcon={{
-                                    type: 'font-awesome', 
-                                    name: 'comment-o', 
-                                    containerStyle:{ paddingRight: 10 }
-                                }}
-                                onChangeText={(text) => this.setState({text: text})}
-                            />
-                            <View style={{margin: 10}}>
-                                <Button
-                                    color='#5637DD'
-                                    title='Submit'
-                                    onPress={() => {
-                                        this.handleComment(campsiteId);
-                                        this.resetForm();
-                                    }}
-                                />
-                            </View>
-                            <View style={{margin: 10}}>
-                                <Button
-                                    color='#808080'
-                                    title='Cancel'
-                                    onPress={() => {
-                                        this.toggleModal();
-                                        this.resetForm();
-                                    }}
-                                />
-                            </View>
                         </View>
-                    </Modal>
-                </ScrollView>
+                        <View style={{ margin: 10 }}>
+                            <Button
+                                color='#808080'
+                                title='Cancel'
+                                onPress={() => {
+                                    this.toggleModal();
+                                    this.resetForm();
+                                }}
+                            />
+                        </View>
+                    </View>
+                </Modal>
+            </ScrollView>
         );
     }
 }
