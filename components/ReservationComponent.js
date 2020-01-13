@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal } from 'react-native';
 import DatePicker from 'react-native-datepicker';
+import SafeAreaView from 'react-native-safe-area-view';
 
 class Reservation extends Component {
 
@@ -102,6 +103,9 @@ class Reservation extends Component {
                     visible={this.state.showModal}
                     onRequestClose={() => this.toggleModal()}>
                     <View style={styles.modal}>
+                        <SafeAreaView 
+                            forceInset={{top: 'always', horizontal: 'never'}}>
+                        </SafeAreaView>
                         <Text style={styles.modalTitle}>Search Campsite Reservations</Text>
                         <Text style={styles.modalText}>Number of Campers: {this.state.campers}</Text>
                         <Text style={styles.modalText}>Hike-In?: {this.state.hikeIn ? 'Yes' : 'No'}</Text>
