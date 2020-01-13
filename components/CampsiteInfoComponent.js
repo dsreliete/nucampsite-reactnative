@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { Text, View, FlatList, ScrollView, Modal, Button, StyleSheet} from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
