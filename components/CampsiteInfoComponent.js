@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, ScrollView, Modal, Button, StyleSheet} from 'react-native';
+import { Text, View, FlatList, ScrollView, Modal, Button, StyleSheet, Alert, PanResponder} from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
 import * as Animatable from 'react-native-animatable';
@@ -23,10 +23,48 @@ const mapDispatchToProps = {
 function RenderCampsite(props) { 
     
     const { campsite } = props; 
+    const recognizeDrag = ({dx}) => (dx < -200) ? true : false;
+    handleViewRef = ref => this.view = ref;
+
+    const panResponder = PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderGrant: () => {
+            this.view.rubberBand(1000)
+            .then(endState => console.log(endState.finished ? 'finished' : 'canceled'));
+        },
+        onPanResponderEnd: (e, gestureState) => {
+            console.log('pan responder end', gestureState);
+            if (recognizeDrag(gestureState)) {
+                Alert.alert(
+                    'Add Favorite',
+                    'Are you sure you wish to add ' + campsite.name + ' to favorites?',
+                    [
+                        {
+                            text: 'Cancel',
+                            style: 'cancel',
+                            onPress: () => console.log('Cancel Pressed')
+                        },
+                        {
+                            text: 'OK',
+                            onPress: () => props.favorite ?
+                                console.log('Already set as a favorite') : props.markFavorite()
+                        }
+                    ],
+                    { cancelable: false }
+                );
+            }
+            return true;
+        }
+    });
     
     if (campsite) {
         return (
-            <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+            <Animatable.View 
+                animation='fadeInDown' 
+                duration={2000} 
+                delay={1000}
+                ref={this.handleViewRef}
+                {...panResponder.panHandlers}>
                 <Card
                     featuredTitle={campsite.name}
                     image={{ uri: baseUrl + campsite.image }}>
