@@ -25,8 +25,8 @@ class Reservation extends Component {
             'Begin Search?',
             `Number of Campers: ${this.state.campers}\n\nHike-In?: ${this.state.hikeIn}\n\nDate: ${this.state.date}`,
             [
-                { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                { text: 'OK', onPress: () => console.log('OK Pressed') },
+                { text: 'Cancel', onPress: () => this.resetForm() },
+                { text: 'OK', onPress: () => this.resetForm() },
             ],
             {cancelable: false},
             );
