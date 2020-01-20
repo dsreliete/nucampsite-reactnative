@@ -23,18 +23,20 @@ const mapDispatchToProps = {
 function RenderCampsite(props) { 
     
     const { campsite } = props; 
-    const recognizeDrag = ({dx}) => (dx < -200) ? true : false;
-    handleViewRef = ref => this.view = ref;
+    let view = React.createRef();
+
+    const recognizeFavoriteDrag = ({dx}) => (dx < -200) ? true : false;
+    const recognizeCommentDrag = ({dx}) => (dx > 200) ? true : false;
 
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onPanResponderGrant: () => {
-            this.view.rubberBand(1000)
+            view.current.rubberBand(1000)
             .then(endState => console.log(endState.finished ? 'finished' : 'canceled'));
         },
         onPanResponderEnd: (e, gestureState) => {
             console.log('pan responder end', gestureState);
-            if (recognizeDrag(gestureState)) {
+            if (recognizeFavoriteDrag(gestureState)) {
                 Alert.alert(
                     'Add Favorite',
                     'Are you sure you wish to add ' + campsite.name + ' to favorites?',
@@ -52,6 +54,8 @@ function RenderCampsite(props) {
                     ],
                     { cancelable: false }
                 );
+            } else if(recognizeCommentDrag(gestureState)) {
+                props.onShowModal()
             }
             return true;
         }
@@ -63,7 +67,7 @@ function RenderCampsite(props) {
                 animation='fadeInDown' 
                 duration={2000} 
                 delay={1000}
-                ref={this.handleViewRef}
+                ref={view}
                 {...panResponder.panHandlers}>
                 <Card
                     featuredTitle={campsite.name}
@@ -167,11 +171,13 @@ class CampsiteInfo extends Component {
         const campsiteId = this.props.navigation.getParam('campsiteId');
         const campsite = this.props.campsites.campsites.filter(campsite => campsite.id === campsiteId)[0];
         const comments = this.props.comments.comments.filter(comment => comment.campsiteId === campsiteId);
+        const favoriteId = this.props.favorites.includes(campsiteId);
+
         return (
             <ScrollView>
                 <RenderCampsite 
                     campsite={campsite}
-                    favorite={this.props.favorites.includes(campsiteId)}
+                    favorite={favoriteId}
                     markFavorite={() => this.markFavorite(campsiteId)}
                     onShowModal={() => this.toggleModal()} 
                 />
