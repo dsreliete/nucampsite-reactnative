@@ -3,6 +3,7 @@ import { View, Platform, StyleSheet, Text, ScrollView, Image } from 'react-nativ
 import { Icon } from 'react-native-elements';
 import { createStackNavigator, createDrawerNavigator, DrawerItems } from 'react-navigation';
 import SafeAreaView from 'react-native-safe-area-view';
+import Login from './LoginComponent';
 import Home from './HomeComponent';
 import Directory from './DirectoryComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
@@ -22,6 +23,29 @@ const mapDispatchToProps = {
     fetchPromotions,
     fetchPartners
 };
+
+const LoginNavigator = createStackNavigator(
+    {
+        Login: { screen: Login }
+    },
+    {
+        navigationOptions: ({navigation}) => ({
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            },
+            headerLeft: <Icon
+                name='sign-in'
+                type='font-awesome'
+                iconStyle={styles.stackIcon}
+                onPress={() => navigation.toggleDrawer()}
+            />
+        })
+    }
+);
 
 const HomeNavigator = createStackNavigator(
     {
@@ -144,24 +168,6 @@ const FavoritesNavigator = createStackNavigator(
     }
 );
 
-const CustomDrawerContentComponent = props => (
-    <ScrollView>
-        <SafeAreaView 
-            style={styles.container}
-            forceInset={{top: 'always', horizontal: 'never'}}>
-            <View style={styles.drawerHeader}>
-                <View style={{flex: 1}}>
-                    <Image source={require('./images/logo.png')} style={styles.drawerImage} />
-                </View>
-                <View style={{flex: 2}}>
-                    <Text style={styles.drawerHeaderText}>NuCamp</Text>
-                </View>
-            </View>
-        </SafeAreaView>
-        <DrawerItems {...props} />
-    </ScrollView>
-);
-
 const ReservationNavigator = createStackNavigator(
     {
         Reservation: { screen: Reservation }
@@ -185,8 +191,39 @@ const ReservationNavigator = createStackNavigator(
     }
 );
 
+const CustomDrawerContentComponent = props => (
+    <ScrollView>
+        <SafeAreaView 
+            style={styles.container}
+            forceInset={{top: 'always', horizontal: 'never'}}>
+            <View style={styles.drawerHeader}>
+                <View style={{flex: 1}}>
+                    <Image source={require('./images/logo.png')} style={styles.drawerImage} />
+                </View>
+                <View style={{flex: 2}}>
+                    <Text style={styles.drawerHeaderText}>NuCamp</Text>
+                </View>
+            </View>
+        </SafeAreaView>
+        <DrawerItems {...props} />
+    </ScrollView>
+);
+
 const MainNavigator = createDrawerNavigator(
     {
+        Login: {
+            screen: LoginNavigator,
+            navigationOptions: {
+                drawerIcon: ({tintColor}) => (
+                    <Icon
+                        name='sign-in'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor}
+                    />
+                )
+            }
+        },
         Home: { 
             screen: HomeNavigator,
             navigationOptions: {
@@ -271,6 +308,7 @@ const MainNavigator = createDrawerNavigator(
         }
     },
     {
+        initialRouteName: 'Home',
         drawerBackgroundColor: '#CEC8FF',
         contentComponent: CustomDrawerContentComponent
     }
