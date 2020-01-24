@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, ScrollView, Modal, Button, StyleSheet, Alert, PanResponder} from 'react-native';
+import { Text, View, ScrollView, FlatList,
+    Modal, Button, StyleSheet,
+    Alert, PanResponder, Share } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
 import * as Animatable from 'react-native-animatable';
@@ -25,6 +27,15 @@ function RenderCampsite(props) {
     const { campsite } = props; 
     let view = React.createRef();
 
+    const shareCampsite = (title, message, url) => {
+        Share.share({
+            title: title,
+            message: `${title}: ${message} ${url}`,
+            url: url
+        },{
+            dialogTitle: 'Share ' + title
+        });
+    };
     const recognizeFavoriteDrag = ({dx}) => (dx < -200) ? true : false;
     const recognizeCommentDrag = ({dx}) => (dx > 200) ? true : false;
 
@@ -93,6 +104,15 @@ function RenderCampsite(props) {
                             raised
                             reverse
                             onPress={() => props.onShowModal()}
+                        />
+                        <Icon
+                            name={'share'}
+                            type='font-awesome'
+                            color='#5637DD'
+                            style={styles.cardItem}
+                            raised
+                            reversed
+                            onPress={() => shareCampsite(campsite.name, campsite.description, baseUrl + campsite.image)} 
                         />
                     </View>
                 </Card>
